@@ -20,6 +20,7 @@ public class Login extends HttpServlet {
 
 	App app = new App();
 	
+	
 	public Login() {
 		super();
 
@@ -28,7 +29,14 @@ public class Login extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		request.getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+		HttpSession session = request.getSession();
+		if((String) session.getAttribute("czyzalogowany")!="1") {
+			request.getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+		}else {
+			request.setAttribute("imienazwisko", (String) session.getAttribute("imienazwisko"));
+			request.getRequestDispatcher("/WEB-INF/zalogowany.jsp").forward(request, response);
+		}
+		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -58,6 +66,13 @@ public class Login extends HttpServlet {
 		session.setAttribute("login", tab[1]);
 		session.setAttribute("imienazwisko", tab[2]);
 	
+		if(tab[0]=="pass") {
+			System.out.println("Bledne haslo");
+		}
+		if(tab[0]=="permissions") {
+			System.out.println("Brak uprawnien");
+		}
+			
 		doGet(request, response);
 	
 		

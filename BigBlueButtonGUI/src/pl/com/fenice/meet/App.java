@@ -122,44 +122,54 @@ public class App {
 			ldapEnv.put(Context.SECURITY_PRINCIPAL, login + "@" + domain);
 			ldapEnv.put(Context.SECURITY_CREDENTIALS, password);
 
-			DirContext context = new InitialDirContext(ldapEnv);
+			try {
+				DirContext context = new InitialDirContext(ldapEnv);
+				try {
+					String searchFilter = "(&(objectClass=user)(sAMAccountName=" + login + ")(memberOf=" + memeber + "))";
+					String[] requiredAttributes = { "sn", "cn", "memberOf", "displayName" };
 
-			String searchFilter = "(&(objectClass=user)(sAMAccountName=" + login + ")(memberOf=" + memeber + "))";
-			String[] requiredAttributes = { "sn", "cn", "memberOf", "displayName" };
+					SearchControls controls = new SearchControls();
+					controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+					controls.setReturningAttributes(requiredAttributes);
+					NamingEnumeration users = context.search(filtr, searchFilter, controls);
+					SearchResult seachResault = null;
+					String commonName = null;
+					String surName = null;
+					String member = null;
+					String displayname = null;
 
-			SearchControls controls = new SearchControls();
-			controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-			controls.setReturningAttributes(requiredAttributes);
-			NamingEnumeration users = context.search(filtr, searchFilter, controls);
-			SearchResult seachResault = null;
-			String commonName = null;
-			String surName = null;
-			String member = null;
-			String displayname = null;
+					wynik[1] = login;
 
-			wynik[1] = login;
+					if (users == null || !users.hasMore()) {
+						wynik[0] = "permissions";
 
-			if (users == null || !users.hasMore()) {
-				wynik[0] = "0";
+					} else {
+						wynik[0] = "1";
+					}
 
-			} else {
-				wynik[0] = "1";
-			}
+					while (users.hasMore()) {
+						seachResault = (SearchResult) users.next();
+						Attributes attr = seachResault.getAttributes();
 
-			while (users.hasMore()) {
-				seachResault = (SearchResult) users.next();
-				Attributes attr = seachResault.getAttributes();
+						commonName = attr.get("cn").get(0).toString();
+						surName = attr.get("sn").get(0).toString();
+						member = attr.get("memberOf").get(0).toString();
+						displayname = attr.get("displayName").get(0).toString();
 
-				commonName = attr.get("cn").get(0).toString();
-				surName = attr.get("sn").get(0).toString();
-				member = attr.get("memberOf").get(0).toString();
-				displayname = attr.get("displayName").get(0).toString();
+						wynik[2] = displayname;
+						
+						return wynik;
 
-				wynik[2] = displayname;
+					}
+				} catch (Exception e) {
+					wynik[0] = "permissions";
+				}
 				
-				return wynik;
-
+			} catch (Exception e) {
+				wynik[0] = "pass";
+				System.out.println(e.toString());
 			}
+		
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
