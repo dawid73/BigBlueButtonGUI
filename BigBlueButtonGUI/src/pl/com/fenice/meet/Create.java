@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.swing.text.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,12 +37,17 @@ public class Create extends HttpServlet {
 	}
 	
 	
-//create?name=Test+Meeting&meetingID=abc123&attendeePW=111222&moderatorPW=333444&checksum=0214a61bfd630139dd9f674dbced8fb5e902f365
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
+		
+		
 		String nameRoom = request.getParameter("nameRoom");
+		
+		HttpSession session = request.getSession();
+		session.setAttribute("nameroom", nameRoom);
+		
 		request.setAttribute("nameRoom", nameRoom);
 		nameRoom = nameRoom.replaceAll(" ", "+");
 		String meetingID = "4321787";

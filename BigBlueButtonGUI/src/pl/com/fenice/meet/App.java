@@ -9,12 +9,20 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Properties;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 import javax.print.Doc;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -95,6 +103,61 @@ public class App {
 				connection.disconnect();
 			}
 		}
+	}
+	
+	
+	public int loginUser() {
+		
+		try {
+			Properties ldapEnv = new Properties();
+			ldapEnv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+			ldapEnv.put(Context.PROVIDER_URL, "ldap://tyr:389");
+			ldapEnv.put(Context.SECURITY_AUTHENTICATION, "simple");
+			ldapEnv.put(Context.SECURITY_PRINCIPAL, "tester@seberus.local");
+			ldapEnv.put(Context.SECURITY_CREDENTIALS, "tester123");
+			
+			DirContext context = new InitialDirContext(ldapEnv);
+			
+			String searchFilter = "(&(objectClass=user)(sAMAccountName=tester)(memberOf=CN=GPO_7nie_wygaszaczBlokada,OU=Fenice,DC=seberus,DC=local))";
+			String[] requiredAttributes = {"sn", "cn", "memberOf"};
+			
+			SearchControls controls = new SearchControls();
+			controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+			controls.setReturningAttributes(requiredAttributes);
+			NamingEnumeration users = context.search("ou=TEST,dc=seberus,dc=local", searchFilter, controls);
+			SearchResult seachResault = null;
+			String commonName = null;
+			String surName = null;
+			String member = null;
+
+			if(users == null) {
+				System.out.println("nie nalezy do grupy");
+			}else {
+				System.out.println("nalezy do grupy");
+			}
+			
+			while(users.hasMore()) {
+				seachResault = (SearchResult) users.next();
+				Attributes attr = seachResault.getAttributes();
+				
+				commonName=attr.get("cn").get(0).toString();
+				surName=attr.get("sn").get(0).toString();
+				member=attr.get("memberOf").get(0).toString();
+				
+				System.out.println("Name: " + commonName);
+				System.out.println("Surname: " + surName);
+				System.out.println("Member: " + member);
+			}
+			
+			
+			
+		} catch (Exception e) {
+			System.out.println("..........blad...............");
+			System.out.println(e.toString());
+		}
+		
+		
+		return 1;
 	}
 
 }
