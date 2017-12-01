@@ -9,7 +9,7 @@
 <body>
 
 <form action="login" method="post">
-login: <input type="text" name="login"><br>
+login: <input type="text" name="username"><br>
 haslo: <input type="password" name="password"><br>
 <input type="submit" value="loguj">
 </form>

@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @WebServlet("/login")
 public class Login extends HttpServlet {
@@ -33,18 +34,33 @@ public class Login extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		
+		System.out.println(username + " || " + password );
+		
 		Properties prop = new Properties();
 		InputStream input = getServletContext().getResourceAsStream("/WEB-INF/config.properties");
+		prop.load(input);
 		
 		String url = prop.getProperty("url");
 		String domain = prop.getProperty("domain");
+		String memberOf = prop.getProperty("memberOf");
+		String filtr = prop.getProperty("filtr");
+		System.out.println(memberOf);
 		
-		System.out.println(url);
-		System.out.println(domain);
+		String[] tab = app.loginUser(username, password, url, domain, memberOf, filtr);
 		
-		System.out.println(app.loginUser("tester", "tester123", "ldap://tyr:389", "seberus.local", "1212121"));
-		
+		System.out.println(tab[2]);
+
+		HttpSession session = request.getSession();
+		session.setAttribute("czyzalogowany", tab[0]);
+		session.setAttribute("login", tab[1]);
+		session.setAttribute("imienazwisko", tab[2]);
+	
 		doGet(request, response);
+	
+		
 	}
 
 }

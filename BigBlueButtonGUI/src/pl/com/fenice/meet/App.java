@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
 
 public class App {
 
-	//suma kontrolna do utworznia linku dla BBB
+	// suma kontrolna do utworznia linku dla BBB
 	public static String checksum(String s) {
 		String checksum = "";
 		try {
@@ -67,8 +67,6 @@ public class App {
 		return outValue;
 	}
 
-	
-	
 	public static String executePost(String targetURL) {
 		HttpURLConnection connection = null;
 
@@ -110,57 +108,63 @@ public class App {
 			}
 		}
 	}
-	
-	
-	public int loginUser(String login, String password, String url, String domain, String memeberOf) {
-		
+
+	public String[] loginUser(String login, String password, String url, String domain, String memeber, String filtr) {
+
+		String[] wynik = new String[3];
 
 		try {
-			
+
 			Properties ldapEnv = new Properties();
 			ldapEnv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 			ldapEnv.put(Context.PROVIDER_URL, url);
 			ldapEnv.put(Context.SECURITY_AUTHENTICATION, "simple");
-			ldapEnv.put(Context.SECURITY_PRINCIPAL, login+"@"+domain);
+			ldapEnv.put(Context.SECURITY_PRINCIPAL, login + "@" + domain);
 			ldapEnv.put(Context.SECURITY_CREDENTIALS, password);
-			
+
 			DirContext context = new InitialDirContext(ldapEnv);
-			
-			String searchFilter = "(&(objectClass=user)(sAMAccountName=tester)(memberOf=CN=GPO_nie_wygaszaczBlokada,OU=Fenice,DC=seberus,DC=local))";
-			String[] requiredAttributes = {"sn", "cn", "memberOf"};
-			
+
+			String searchFilter = "(&(objectClass=user)(sAMAccountName=" + login + ")(memberOf=" + memeber + "))";
+			String[] requiredAttributes = { "sn", "cn", "memberOf", "displayName" };
+
 			SearchControls controls = new SearchControls();
 			controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 			controls.setReturningAttributes(requiredAttributes);
-			NamingEnumeration users = context.search("ou=TEST,dc=seberus,dc=local", searchFilter, controls);
+			NamingEnumeration users = context.search(filtr, searchFilter, controls);
 			SearchResult seachResault = null;
 			String commonName = null;
 			String surName = null;
 			String member = null;
+			String displayname = null;
 
-			if(users == null || !users.hasMore()) {
-				System.out.println("nie nalezy do grupy");
-			}else {
-				System.out.println("nalezy do grupy");
+			wynik[1] = login;
+
+			if (users == null || !users.hasMore()) {
+				wynik[0] = "0";
+
+			} else {
+				wynik[0] = "1";
 			}
-			
-			while(users.hasMore()) {
+
+			while (users.hasMore()) {
 				seachResault = (SearchResult) users.next();
 				Attributes attr = seachResault.getAttributes();
+
+				commonName = attr.get("cn").get(0).toString();
+				surName = attr.get("sn").get(0).toString();
+				member = attr.get("memberOf").get(0).toString();
+				displayname = attr.get("displayName").get(0).toString();
+
+				wynik[2] = displayname;
 				
-				commonName=attr.get("cn").get(0).toString();
-				surName=attr.get("sn").get(0).toString();
-				member=attr.get("memberOf").get(0).toString();
-				
-				System.out.println("Name: " + commonName);
-				System.out.println("Surname: " + surName);
-				System.out.println("Member: " + member);
-			}	
+				return wynik;
+
+			}
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
-		return 1;
-	}
 
+		return wynik;
+	}
 
 }
