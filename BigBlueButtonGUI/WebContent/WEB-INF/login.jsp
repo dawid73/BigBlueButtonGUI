@@ -7,6 +7,12 @@
 <title>Insert title here</title>
 </head>
 <body>
-testowo - testowo
+
+<form action="login" method="post">
+login: <input type="text" name="login"><br>
+haslo: <input type="password" name="password"><br>
+<input type="submit" value="loguj">
+</form>
+
 </body>
 </html>

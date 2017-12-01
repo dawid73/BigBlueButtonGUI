@@ -1,10 +1,13 @@
 package pl.com.fenice.meet;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.IOException;
+
 import java.io.InputStream;
+import java.io.IOException;
+
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
@@ -33,6 +36,7 @@ import org.xml.sax.SAXException;
 
 public class App {
 
+	//suma kontrolna do utworznia linku dla BBB
 	public static String checksum(String s) {
 		String checksum = "";
 		try {
@@ -63,6 +67,8 @@ public class App {
 		return outValue;
 	}
 
+	
+	
 	public static String executePost(String targetURL) {
 		HttpURLConnection connection = null;
 
@@ -106,19 +112,21 @@ public class App {
 	}
 	
 	
-	public int loginUser() {
+	public int loginUser(String login, String password, String url, String domain, String memeberOf) {
 		
+
 		try {
+			
 			Properties ldapEnv = new Properties();
 			ldapEnv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-			ldapEnv.put(Context.PROVIDER_URL, "ldap://tyr:389");
+			ldapEnv.put(Context.PROVIDER_URL, url);
 			ldapEnv.put(Context.SECURITY_AUTHENTICATION, "simple");
-			ldapEnv.put(Context.SECURITY_PRINCIPAL, "tester@seberus.local");
-			ldapEnv.put(Context.SECURITY_CREDENTIALS, "tester123");
+			ldapEnv.put(Context.SECURITY_PRINCIPAL, login+"@"+domain);
+			ldapEnv.put(Context.SECURITY_CREDENTIALS, password);
 			
 			DirContext context = new InitialDirContext(ldapEnv);
 			
-			String searchFilter = "(&(objectClass=user)(sAMAccountName=tester)(memberOf=CN=GPO_7nie_wygaszaczBlokada,OU=Fenice,DC=seberus,DC=local))";
+			String searchFilter = "(&(objectClass=user)(sAMAccountName=tester)(memberOf=CN=GPO_nie_wygaszaczBlokada,OU=Fenice,DC=seberus,DC=local))";
 			String[] requiredAttributes = {"sn", "cn", "memberOf"};
 			
 			SearchControls controls = new SearchControls();
@@ -130,7 +138,7 @@ public class App {
 			String surName = null;
 			String member = null;
 
-			if(users == null) {
+			if(users == null || !users.hasMore()) {
 				System.out.println("nie nalezy do grupy");
 			}else {
 				System.out.println("nalezy do grupy");
@@ -147,17 +155,12 @@ public class App {
 				System.out.println("Name: " + commonName);
 				System.out.println("Surname: " + surName);
 				System.out.println("Member: " + member);
-			}
-			
-			
-			
+			}	
 		} catch (Exception e) {
-			System.out.println("..........blad...............");
 			System.out.println(e.toString());
 		}
-		
-		
 		return 1;
 	}
+
 
 }
