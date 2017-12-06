@@ -1,14 +1,17 @@
 package pl.com.fenice.meet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 
 @WebServlet("/connect")
@@ -16,8 +19,8 @@ public class Join extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
 	
-	String homePage = "http://10.56.1.248/bigbluebutton/api/";
-	String secret = "0a82ee4cb1b20f731e98b47dbf329f0a";
+	
+	
 	
     public Join() {
         super();
@@ -27,9 +30,24 @@ public class Join extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		String idmeeting = request.getParameter("idmeeting");
+		Properties prop = new Properties();
+		InputStream input = getServletContext().getResourceAsStream("/WEB-INF/config.properties");
+		prop.load(input);
+		String homePage = prop.getProperty("homePage");
+		String secret = prop.getProperty("secret");
 		
-		String url = "meetingID="+idmeeting+"&fullName=Dawid&password=333444";
+		
+		HttpSession session = request.getSession();
+		if((String) session.getAttribute("czyzalogowany")!="1"){
+			request.getRequestDispatcher("/WEB-INF/views/welcome.jsp").forward(request, response);
+		}
+		
+		String idmeeting = request.getParameter("idmeeting");
+		String imieinaziwsko = request.getParameter("imienazwisko");
+		System.out.println(imieinaziwsko);
+		imieinaziwsko = imieinaziwsko.replaceAll(" ", "+");
+		System.out.println(imieinaziwsko);
+		String url = "meetingID="+idmeeting+"&fullName="+imieinaziwsko+"&password=333444";
 		String checksumFromUrl = App.checksum("join"+url+secret);
 		String urlToSend = homePage+"join?"+url+"&checksum="+checksumFromUrl;
 		System.out.println(urlToSend);
@@ -46,7 +64,8 @@ public class Join extends HttpServlet {
 		
 		request.setAttribute("idFromXml", idmeeting);
 		request.setAttribute("link", urlToSend);
-		request.getRequestDispatcher("/WEB-INF/views/open.jsp").forward(request, response);
+		response.sendRedirect(urlToSend);
+		//request.getRequestDispatcher("/WEB-INF/views/open.jsp").forward(request, response);
 		
 	}
 

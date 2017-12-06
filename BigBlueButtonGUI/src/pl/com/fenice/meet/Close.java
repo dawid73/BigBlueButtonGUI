@@ -1,8 +1,10 @@
 package pl.com.fenice.meet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,9 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 public class Close extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
-	
-	String homePage = "http://10.56.1.248/bigbluebutton/api/";
-	String secret = "0a82ee4cb1b20f731e98b47dbf329f0a";
+
 	
     public Close() {
         super();
@@ -26,6 +26,12 @@ public class Close extends HttpServlet {
 //end?meetingID=1234567890&password=mp&checksum=1234
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		Properties prop = new Properties();
+		InputStream input = getServletContext().getResourceAsStream("/WEB-INF/config.properties");
+		prop.load(input);
+		String homePage = prop.getProperty("homePage");
+		String secret = prop.getProperty("secret");
 		
 		String idmeeting = request.getParameter("idmeeting");
 		
@@ -36,7 +42,7 @@ public class Close extends HttpServlet {
 		
 		String httpQuestionValueXmlString = App.executePost(urlToSend);
 		
-	
+		request.getRequestDispatcher("/WEB-INF/views/zalogowany.jsp?info=closeroom").forward(request, response);
 
 		
 	}

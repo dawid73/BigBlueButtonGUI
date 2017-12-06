@@ -3,12 +3,15 @@ package pl.com.fenice.meet;
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Properties;
+import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,9 +30,7 @@ import org.xml.sax.SAXException;
 public class Create extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	
-	String homePage = "http://10.56.1.248/bigbluebutton/api/";
-	String secret = "0a82ee4cb1b20f731e98b47dbf329f0a";
+
 	
 	public Create() {
 		super();
@@ -41,16 +42,27 @@ public class Create extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
+		Properties prop = new Properties();
+		InputStream input = getServletContext().getResourceAsStream("/WEB-INF/config.properties");
+		prop.load(input);
+		String homePage = prop.getProperty("homePage");
+		String secret = prop.getProperty("secret");
 		
+		HttpSession session = request.getSession();
+		if((String) session.getAttribute("czyzalogowany")!="1"){
+			request.getRequestDispatcher("/WEB-INF/views/welcome.jsp").forward(request, response);
+		}
 		
 		String nameRoom = request.getParameter("nameRoom");
 		
-		HttpSession session = request.getSession();
+
 		session.setAttribute("nameroom", nameRoom);
 		
 		request.setAttribute("nameRoom", nameRoom);
 		nameRoom = nameRoom.replaceAll(" ", "+");
-		String meetingID = "4321787";
+		Random rand = new Random(); 
+		int meetingID = rand.nextInt(4000); 
+		
 		String adminName = request.getParameter("adminName");
 
 		String url = "name="+nameRoom+"&meetingID="+meetingID+"&attendeePW=111222&moderatorPW=333444";

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
 
 @WebServlet("/login")
 public class Login extends HttpServlet {
@@ -30,22 +31,36 @@ public class Login extends HttpServlet {
 			throws ServletException, IOException {
 		
 		HttpSession session = request.getSession();
-		if((String) session.getAttribute("czyzalogowany")!="1") {
-			request.getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+		//session.setAttribute("czyzalogowany", "0");
+		System.out.println("czy zalogowany: " + session.getAttribute("czyzalogowany"));
+		if((String) session.getAttribute("czyzalogowany")!="1"){
+			if((String) session.getAttribute("info")=="badpass"){
+				request.getRequestDispatcher("/WEB-INF/views/welcome.jsp?info=zlehaslo").forward(request, response);
+			}
+			if((String) session.getAttribute("info")=="permissions"){
+				request.getRequestDispatcher("/WEB-INF/views/welcome.jsp?info=brakuprawnien").forward(request, response);
+			}
+			
+			request.getRequestDispatcher("/WEB-INF/views/welcome.jsp").forward(request, response);
 		}else {
 			request.setAttribute("imienazwisko", (String) session.getAttribute("imienazwisko"));
-			request.getRequestDispatcher("/WEB-INF/zalogowany.jsp").forward(request, response);
+			
+				response.sendRedirect("start");
+				
+			//request.getRequestDispatcher("/WEB-INF/views/zalogowany.jsp").forward(request, response);
 		}
 		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		HttpSession session = request.getSession();
 
+		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
-		System.out.println(username + " || " + password );
+		//System.out.println(username + " || " + password );
 		
 		Properties prop = new Properties();
 		InputStream input = getServletContext().getResourceAsStream("/WEB-INF/config.properties");
@@ -55,21 +70,24 @@ public class Login extends HttpServlet {
 		String domain = prop.getProperty("domain");
 		String memberOf = prop.getProperty("memberOf");
 		String filtr = prop.getProperty("filtr");
-		System.out.println(memberOf);
+		//System.out.println(memberOf);
 		
 		String[] tab = app.loginUser(username, password, url, domain, memberOf, filtr);
+
 		
 		System.out.println(tab[2]);
 
-		HttpSession session = request.getSession();
+		
 		session.setAttribute("czyzalogowany", tab[0]);
 		session.setAttribute("login", tab[1]);
 		session.setAttribute("imienazwisko", tab[2]);
 	
 		if(tab[0]=="pass") {
+			session.setAttribute("info", "badpass");
 			System.out.println("Bledne haslo");
 		}
 		if(tab[0]=="permissions") {
+			session.setAttribute("info", "permissions");
 			System.out.println("Brak uprawnien");
 		}
 			

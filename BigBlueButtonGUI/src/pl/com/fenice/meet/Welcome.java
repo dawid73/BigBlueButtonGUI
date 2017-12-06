@@ -15,7 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import javax.servlet.http.HttpSession;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
@@ -38,8 +38,14 @@ public class Welcome extends HttpServlet {
 			throws ServletException, IOException {
 
 		
-
-		request.getRequestDispatcher("/WEB-INF/views/welcome.jsp").forward(request, response);
+		HttpSession session = request.getSession();
+		if((String) session.getAttribute("czyzalogowany")!="1") {
+			request.getRequestDispatcher("/WEB-INF/views/welcome.jsp").forward(request, response);
+		}else {
+			request.setAttribute("imienazwisko", (String) session.getAttribute("imienazwisko"));
+			request.getRequestDispatcher("/WEB-INF/views/zalogowany.jsp").forward(request, response);
+		}
+		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
