@@ -44,6 +44,7 @@ public class Join extends HttpServlet {
 		
 		String idmeeting = request.getParameter("idmeeting");
 		String imieinaziwsko = request.getParameter("imienazwisko");
+		imieinaziwsko=App.usunPolskieZnaki(imieinaziwsko);
 		System.out.println(imieinaziwsko);
 		imieinaziwsko = imieinaziwsko.replaceAll(" ", "+");
 		System.out.println(imieinaziwsko);

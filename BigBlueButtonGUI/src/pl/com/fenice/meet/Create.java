@@ -54,6 +54,7 @@ public class Create extends HttpServlet {
 		}
 		
 		String nameRoom = request.getParameter("nameRoom");
+		nameRoom = App.usunPolskieZnaki(nameRoom);
 		
 
 		session.setAttribute("nameroom", nameRoom);
@@ -64,7 +65,8 @@ public class Create extends HttpServlet {
 		int meetingID = rand.nextInt(4000); 
 		
 		String adminName = request.getParameter("adminName");
-
+		
+		
 		String url = "name="+nameRoom+"&meetingID="+meetingID+"&attendeePW=111222&moderatorPW=333444";
 		String checksumFromUrl = App.checksum("create"+url+secret);
 		String urlToSend = homePage+"create?"+url+"&checksum="+checksumFromUrl;
@@ -84,7 +86,8 @@ public class Create extends HttpServlet {
 			
 			request.setAttribute("idFromXml", idFromXml);
 			if(httpQuestionValueXml.equals("SUCCESS")) {
-				request.getRequestDispatcher("/WEB-INF/views/create.jsp").forward(request, response);
+				response.sendRedirect("start");
+				//request.getRequestDispatcher("/WEB-INF/views/create.jsp").forward(request, response);
 			}
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();

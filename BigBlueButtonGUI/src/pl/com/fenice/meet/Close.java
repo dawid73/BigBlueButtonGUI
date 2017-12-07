@@ -42,8 +42,8 @@ public class Close extends HttpServlet {
 		
 		String httpQuestionValueXmlString = App.executePost(urlToSend);
 		
-		request.getRequestDispatcher("/WEB-INF/views/zalogowany.jsp?info=closeroom").forward(request, response);
-
+		//request.getRequestDispatcher("/WEB-INF/views/zalogowany.jsp?info=closeroom").forward(request, response);
+		response.sendRedirect("start?info=closeroom");
 		
 	}
 

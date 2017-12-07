@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.w3c.dom.Document;
@@ -35,6 +37,22 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class App {
+	
+	public static String usunPolskieZnaki(String s) {
+	
+		String str = s;
+		str = str.replace("π", "a").replace("•", "A");
+		str = str.replace("Ê", "c").replace("∆", "c");
+		str = str.replace("Í", "e").replace(" ", "E");
+		str = str.replace("≥", "l").replace("£", "L");
+		str = str.replace("Ò", "n").replace("—", "N");
+		str = str.replace("Û", "o").replace("”", "O");
+		str = str.replace("ú", "s").replace("å", "S");
+		str = str.replace("ü", "z").replace("è", "Z");
+		str = str.replace("ø", "z").replace("Ø", "Z");
+		str = str.replace(".", "-");
+		return str;
+	}
 
 	// suma kontrolna do utworznia linku dla BBB
 	public static String checksum(String s) {
@@ -65,6 +83,50 @@ public class App {
 		String outValue = eElement.getElementsByTagName(value).item(0).getTextContent();
 
 		return outValue;
+	}
+
+	public static List<String> getListFromXML(String xml)
+			throws ParserConfigurationException, SAXException, IOException {
+
+		List<String> listString = new ArrayList<>();
+		
+		String meetingName;
+		String meetingID;
+		String attendeePW;
+		String moderatorPW;
+		
+		
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder;
+
+		builder = factory.newDocumentBuilder();
+		Document document = builder.parse(new InputSource(new StringReader(xml)));
+		NodeList nList = document.getElementsByTagName("meeting");
+		System.out.println("ilosc pokoi: " + nList.getLength());
+	
+		
+		for (int temp = 0; temp < nList.getLength(); temp++) {
+
+			Node nNode = nList.item(temp);
+			
+			Element eElement = (Element) nNode;
+			
+			meetingID = eElement.getElementsByTagName("meetingID").item(0).getChildNodes().item(0).getNodeValue();
+			meetingName = eElement.getElementsByTagName("meetingName").item(0).getChildNodes().item(0).getNodeValue();
+			moderatorPW = eElement.getElementsByTagName("moderatorPW").item(0).getChildNodes().item(0).getNodeValue();
+			attendeePW = eElement.getElementsByTagName("attendeePW").item(0).getChildNodes().item(0).getNodeValue();
+			
+			System.out.println("Spotkanie nr: "+temp+" || " + meetingName +" || " + meetingID +" || " + attendeePW +" || " + moderatorPW);
+			
+			listString.add(meetingID);
+			listString.add(meetingName);
+			listString.add(moderatorPW);
+			listString.add(attendeePW);
+	
+			
+		}
+		
+		return listString;
 	}
 
 	public static String executePost(String targetURL) {
@@ -125,7 +187,8 @@ public class App {
 			try {
 				DirContext context = new InitialDirContext(ldapEnv);
 				try {
-					String searchFilter = "(&(objectClass=user)(sAMAccountName=" + login + ")(memberOf=" + memeber + "))";
+					String searchFilter = "(&(objectClass=user)(sAMAccountName=" + login + ")(memberOf=" + memeber
+							+ "))";
 					String[] requiredAttributes = { "sn", "cn", "memberOf", "displayName" };
 
 					SearchControls controls = new SearchControls();
@@ -157,25 +220,24 @@ public class App {
 						displayname = attr.get("displayName").get(0).toString();
 
 						wynik[2] = displayname;
-						
+
 						return wynik;
 
 					}
 				} catch (Exception e) {
 					wynik[0] = "permissions";
 				}
-				
+
 			} catch (Exception e) {
 				wynik[0] = "pass";
 				System.out.println(e.toString());
 			}
-		
+
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
 
 		return wynik;
 	}
-	
 
 }
