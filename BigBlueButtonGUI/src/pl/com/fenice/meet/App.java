@@ -94,6 +94,7 @@ public class App {
 		String meetingID;
 		String attendeePW;
 		String moderatorPW;
+		String autorName;
 		
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -115,13 +116,15 @@ public class App {
 			meetingName = eElement.getElementsByTagName("meetingName").item(0).getChildNodes().item(0).getNodeValue();
 			moderatorPW = eElement.getElementsByTagName("moderatorPW").item(0).getChildNodes().item(0).getNodeValue();
 			attendeePW = eElement.getElementsByTagName("attendeePW").item(0).getChildNodes().item(0).getNodeValue();
-			
+			autorName = eElement.getElementsByTagName("autor").item(0).getChildNodes().item(0).getNodeValue();
+			System.out.println(autorName);
 			System.out.println("Spotkanie nr: "+temp+" || " + meetingName +" || " + meetingID +" || " + attendeePW +" || " + moderatorPW);
 			
 			listString.add(meetingID);
 			listString.add(meetingName);
 			listString.add(moderatorPW);
 			listString.add(attendeePW);
+			listString.add(autorName);
 	
 			
 		}

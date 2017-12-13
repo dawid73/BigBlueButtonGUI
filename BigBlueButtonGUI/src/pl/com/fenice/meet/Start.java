@@ -65,6 +65,7 @@ public class Start extends HttpServlet {
 
 				String room = "";
 				List<Room> listRooms = new ArrayList<Room>();
+				List<Room> listRoomsUsers = new ArrayList<Room>();
 				
 				try {
 					room = App.getValueToXML(httpQuestionValueXmlString, "messageKey");
@@ -78,23 +79,33 @@ public class Start extends HttpServlet {
 
 					roomList = App.getListFromXML(httpQuestionValueXmlString);
 
-					int iloscPokoi = roomList.size() / 4;
+					int iloscPokoi = roomList.size() / 5;
 					System.out.println(iloscPokoi);
 
 					System.out.println(roomList.get(0));
 	
 					
+					String ja = (String) session.getAttribute("imienazwisko");
+					
+					ja=App.usunPolskieZnaki(ja);
+					
 					int r = 1;
 					int i = 0;
 					while ( r <= iloscPokoi) {
-			
-						listRooms.add(new Room(roomList.get(i), roomList.get(i+1), roomList.get(i+2), roomList.get(i+3)));
+						
+						listRooms.add(new Room(roomList.get(i), roomList.get(i+1), roomList.get(i+2), roomList.get(i+3), roomList.get(i+4)));
 					
-						i = i+4;
+						i = i+5;
 						r++;
 					}
 
-					request.setAttribute("listRooms", listRooms);
+					for(Room lr : listRooms) {
+						if(lr.autor.equals(ja) || ja.equals("Administrator")) {
+
+							listRoomsUsers.add(lr);
+						}
+					}
+					request.setAttribute("listRooms", listRoomsUsers);
 					
 					
 					

@@ -44,11 +44,12 @@ public class Join extends HttpServlet {
 		
 		String idmeeting = request.getParameter("idmeeting");
 		String imieinaziwsko = request.getParameter("imienazwisko");
+		String password = request.getParameter("password");
 		imieinaziwsko=App.usunPolskieZnaki(imieinaziwsko);
 		System.out.println(imieinaziwsko);
 		imieinaziwsko = imieinaziwsko.replaceAll(" ", "+");
 		System.out.println(imieinaziwsko);
-		String url = "meetingID="+idmeeting+"&fullName="+imieinaziwsko+"&password=333444";
+		String url = "meetingID="+idmeeting+"&fullName="+imieinaziwsko+"&password="+password;
 		String checksumFromUrl = App.checksum("join"+url+secret);
 		String urlToSend = homePage+"join?"+url+"&checksum="+checksumFromUrl;
 		System.out.println(urlToSend);

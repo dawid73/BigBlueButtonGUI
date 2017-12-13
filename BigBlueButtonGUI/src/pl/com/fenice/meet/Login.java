@@ -60,6 +60,9 @@ public class Login extends HttpServlet {
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
+		
+		
+		
 		//System.out.println(username + " || " + password );
 		
 		Properties prop = new Properties();
@@ -70,7 +73,20 @@ public class Login extends HttpServlet {
 		String domain = prop.getProperty("domain");
 		String memberOf = prop.getProperty("memberOf");
 		String filtr = prop.getProperty("filtr");
+		
+		String adminLogin = prop.getProperty("adminLogin");
+		String adminPass = prop.getProperty("adminPass");
 		//System.out.println(memberOf);
+		
+		// LOGOWANIE ADMINA //
+		if(username.equals(adminLogin)&&(password.equals(adminPass))) {
+			session.setAttribute("czyzalogowany", "1");
+			session.setAttribute("login", "Administrator");
+			session.setAttribute("imienazwisko", "Administrator");
+			
+			doGet(request, response);
+		}else {
+		
 		
 		String[] tab = app.loginUser(username, password, url, domain, memberOf, filtr);
 
@@ -92,7 +108,8 @@ public class Login extends HttpServlet {
 		}
 			
 		doGet(request, response);
-	
+		
+		}
 		
 	}
 

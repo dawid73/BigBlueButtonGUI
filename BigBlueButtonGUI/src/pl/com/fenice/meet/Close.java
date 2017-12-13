@@ -34,8 +34,8 @@ public class Close extends HttpServlet {
 		String secret = prop.getProperty("secret");
 		
 		String idmeeting = request.getParameter("idmeeting");
-		
-		String url = "meetingID="+idmeeting+"&password=333444";
+		String password = request.getParameter("password");
+		String url = "meetingID="+idmeeting+"&password="+password;
 		String checksumFromUrl = App.checksum("end"+url+secret);
 		String urlToSend = homePage+"end?"+url+"&checksum="+checksumFromUrl;
 		System.out.println(urlToSend);

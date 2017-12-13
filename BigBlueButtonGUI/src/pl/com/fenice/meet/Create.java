@@ -63,11 +63,15 @@ public class Create extends HttpServlet {
 		nameRoom = nameRoom.replaceAll(" ", "+");
 		Random rand = new Random(); 
 		int meetingID = rand.nextInt(4000); 
+		int intAttendeePW = rand.nextInt(4000);
+		int intModeratorPW = rand.nextInt(4000);
 		
-		String adminName = request.getParameter("adminName");
+		String adminName = request.getParameter("imienazwisko");
+		adminName = adminName.replaceAll(" ", "+");
+		adminName = App.usunPolskieZnaki(adminName);
 		
 		
-		String url = "name="+nameRoom+"&meetingID="+meetingID+"&attendeePW=111222&moderatorPW=333444";
+		String url = "name="+nameRoom+"&meetingID="+meetingID+"&attendeePW="+intAttendeePW+"&moderatorPW="+intModeratorPW+"&meta_autor="+adminName+"";
 		String checksumFromUrl = App.checksum("create"+url+secret);
 		String urlToSend = homePage+"create?"+url+"&checksum="+checksumFromUrl;
 		System.out.println(urlToSend);

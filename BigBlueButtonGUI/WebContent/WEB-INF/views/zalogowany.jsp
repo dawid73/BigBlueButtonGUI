@@ -61,6 +61,7 @@
   <thead>
     <tr>
       <th scope="col">Nazwa pokoju</th>
+      <th scope="col">Utworzony przez</th>
       <th scope="col">Połącz</th>
       <th scope="col">Wyślij zaproszenie</th>
       <th scope="col">Zamknij</th>
@@ -70,18 +71,28 @@
   <c:forEach items="${requestScope.listRooms}" var="room">
   	<tr>
 	<th scope="row"><c:out value="${room.meetingName}"></c:out></th>
+	<td><c:out value="${room.autor}"></c:out></td>
 	<td>
 		<form class="form-signin" method="get" action="connect"
 					target="_blank">
 					<input type="hidden" name="idmeeting" value="${room.meetingID}">
 					<input type="hidden" name="imienazwisko" value="${imienazwisko}">
-					<button class="btn btn-primary btn-sm" type="submit">Połącz</button>
+					<input type="hidden" name="password" value="${room.moderatorPW}">
+					<button class="btn btn-primary btn-sm" type="submit">Połącz [Mod]</button>
+			</form><br/>
+					<form class="form-signin" method="get" action="connect"
+					target="_blank">
+					<input type="hidden" name="idmeeting" value="${room.meetingID}">
+					<input type="hidden" name="imienazwisko" value="${imienazwisko}">
+					<input type="hidden" name="password" value="${room.attendeePW}">
+					<button class="btn btn-primary btn-sm" type="submit">Połącz [View]</button>
 			</form>
 	</td>
 	<td>ZAPROSZNIE</td>
 	<td>
 		<form class="form-signin" action="close" method="get">
 					<input type="hidden" name="idmeeting" value="${room.meetingID}">
+					<input type="hidden" name="password" value="${room.moderatorPW}">
 					<button class="btn btn-danger btn-sm" type="submit">Zamknij</button>
 		</form>
 	
