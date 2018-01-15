@@ -30,7 +30,6 @@ public class Start extends HttpServlet {
 			throws ServletException, IOException {
 
 		
-		
 		Properties prop = new Properties();
 		InputStream input = getServletContext().getResourceAsStream("/WEB-INF/config.properties");
 		prop.load(input);
@@ -46,8 +45,8 @@ public class Start extends HttpServlet {
 				request.getRequestDispatcher("/WEB-INF/views/welcome.jsp?info=brakuprawnien").forward(request,
 						response);
 			}
-
-			request.getRequestDispatcher("/WEB-INF/views/welcome.jsp").forward(request, response);
+			
+			request.getRequestDispatcher("welcome").forward(request, response);
 		} else {
 
 			String url = "getMeetings";
@@ -98,7 +97,7 @@ public class Start extends HttpServlet {
 						i = i+5;
 						r++;
 					}
-
+					
 					for(Room lr : listRooms) {
 						if(lr.autor.equals(ja) || ja.equals("Administrator")) {
 
@@ -107,6 +106,7 @@ public class Start extends HttpServlet {
 					}
 					request.setAttribute("listRooms", listRoomsUsers);
 					
+					session.setAttribute("listapokoi", listRooms);
 					
 					
 					//request.setAttribute("lista", roomList);
@@ -127,6 +127,7 @@ public class Start extends HttpServlet {
 			}
 
 			request.setAttribute("imienazwisko", (String) session.getAttribute("imienazwisko"));
+			
 			request.getRequestDispatcher("/WEB-INF/views/zalogowany.jsp").forward(request, response);
 		}
 

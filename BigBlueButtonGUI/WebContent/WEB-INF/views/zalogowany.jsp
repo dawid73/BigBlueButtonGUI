@@ -26,8 +26,20 @@
 	</div>
 	<%
 		}
+			if (dane.equals("wyslanozaproszenie")) {
+	%>
+	<div class="row">
+		<div class="col-md-4"></div>
+		<div class="alert alert-success col-md-4">Zaproszenie wysłane ! </div>
+		<div class="col-md-4"></div>
+	</div>
+	<%
+		}
 		}
 	%>
+	
+	
+	
 
 	<div class="container">
 		<div class="row">
@@ -38,10 +50,12 @@
 
 
 				<a href="logout"><button type="button" class="btn btn-warning">Wyloguj</button></a></br>
-				</br>
-
+				
+<div class="col-10"></div>
 			</div>
-			<div class="col-8">
+			</div>
+			<div class="row">
+			<div class="col-12">
 
 				<form class="form-signin" method="get" action="create">
 					<h2 class="form-signin-heading">Tworzenie pokoju</h2>
@@ -73,22 +87,34 @@
 	<th scope="row"><c:out value="${room.meetingName}"></c:out></th>
 	<td><c:out value="${room.autor}"></c:out></td>
 	<td>
-		<form class="form-signin" method="get" action="connect"
+		<form class="form-group" method="get" action="connect"
 					target="_blank">
 					<input type="hidden" name="idmeeting" value="${room.meetingID}">
 					<input type="hidden" name="imienazwisko" value="${imienazwisko}">
 					<input type="hidden" name="password" value="${room.moderatorPW}">
-					<button class="btn btn-primary btn-sm" type="submit">Połącz [Mod]</button>
-			</form><br/>
-					<form class="form-signin" method="get" action="connect"
+					<button class="btn btn-success btn-sm" type="submit">Połącz [Prezenter]</button>
+			</form>
+					<form class="form-group" method="get" action="connect"
 					target="_blank">
 					<input type="hidden" name="idmeeting" value="${room.meetingID}">
 					<input type="hidden" name="imienazwisko" value="${imienazwisko}">
 					<input type="hidden" name="password" value="${room.attendeePW}">
-					<button class="btn btn-primary btn-sm" type="submit">Połącz [View]</button>
+					<button class="btn btn-info btn-sm" type="submit">Połącz [Widz]</button>
 			</form>
 	</td>
-	<td>ZAPROSZNIE</td>
+	<td>
+	<form class="form-group" method="get" action="SendEmail"
+					>
+					<input type="hidden" name="idmeeting" value="${room.meetingID}">
+					<input type="email" id="email" name="email" class="form-control" placeholder="Adres email">
+					<input type="hidden" name="password" value="${room.attendeePW}">
+					<input type="hidden" name="meetingName" value="${room.meetingName}">
+					<button class="btn btn-primary btn-sm" type="submit">Wyślij zaproszenie</button>
+			</form>
+<%-- 					Dostęp poprzez zalgowanie się danymi: <br/>
+					Użytkownik: <b> user </b><br/>
+					Hasło: <b> ${room.attendeePW} </b><br/> --%>
+	</td>
 	<td>
 		<form class="form-signin" action="close" method="get">
 					<input type="hidden" name="idmeeting" value="${room.meetingID}">

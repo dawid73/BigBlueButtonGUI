@@ -73,8 +73,8 @@
 					type="password" id="inputPassword" class="form-control"
 					placeholder="Hasło" required="" name="password">
 				<div class="checkbox">
-					<label> <input type="checkbox" value="remember-me" checked>
-						Jestem użytkonikiem domenowym
+					<!-- <label> <input type="checkbox" value="remember-me" checked>
+						Jestem użytkonikiem domenowym -->
 					</label> <label>UWAGA!! Jeżeli nie masz konta w domenie, podaj
 						login i hasło otrzymane od organizatora spotkania. </label>
 				</div>
